@@ -35,9 +35,14 @@ def csv_file_finder():
         print(directory_csv)
 
 def change_task(index):
-    if index == 0 or index == 1:
+    if index == 0:
         btn_browse2.setVisible(True)
         btn_browse.setVisible(False)
+
+    elif index == 0:
+        btn_browse2.setVisible(True)
+        btn_browse.setVisible(False)
+
     elif index == 2:
         btn_browse2.setVisible(False)
         btn_browse.setVisible(True)
