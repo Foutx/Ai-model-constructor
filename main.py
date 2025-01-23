@@ -9,7 +9,7 @@ main.setGeometry(600, 500, 600, 500)
 btn_browse = QPushButton('Выбрать папку')
 btn_browse2 = QPushButton('Выбрать файл')
 choose_task = QComboBox()
-choose_task.addItems(['Задача регрессии', 'Задача классификации'])
+choose_task.addItems(['Задача регрессии (CSV Файл)', 'Задача классификации (CSV Файл)', 'Задача классификации (Изображения)'])
 
 row1 = QHBoxLayout()
 row2 = QHBoxLayout()
@@ -35,10 +35,10 @@ def csv_file_finder():
         print(directory_csv)
 
 def change_task(index):
-    if index == 0:
+    if index == 0 or index == 1:
         btn_browse2.setVisible(True)
         btn_browse.setVisible(False)
-    elif index == 1:
+    elif index == 2:
         btn_browse2.setVisible(False)
         btn_browse.setVisible(True)
 
