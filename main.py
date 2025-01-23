@@ -7,3 +7,6 @@ line = QVBoxLayout()
 main.setLayout(line)
 main.show()
 app.exec_()
+
+data = input('Введите ссылку на датасет: ')
+print(data)
