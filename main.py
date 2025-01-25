@@ -35,8 +35,8 @@ if __name__ == '__main__':
     if_metrics = QCheckBox(' Значения метрик (.txt) ')
 
     percent_data = QLineEdit()
-    percent_data.setPlaceholderText('% тестовых данных')
-    percent_data.setToolTip('Процент тестовых данных в %')
+    percent_data.setPlaceholderText('% тестовых данных /100')
+    percent_data.setToolTip('Процент тестовых данных в %/100')
 
     choose_task = QComboBox()
     choose_task.addItems(['Задача регрессии (CSV Файл)', 'Задача классификации (CSV Файл)', 'Задача классификации (Изображения)'])
@@ -164,9 +164,18 @@ if __name__ == '__main__':
 
     def create_model_reg_forest():
 
-        n_estimators = get_reg_forest_estimators.text()
-        n_estimators = get_int(n_estimators,50)
-        if n_estimators is np.nan:
+        try:
+            X_train,X_test,y_train,y_test = regression.data_test_train_split(directory_csv,
+                                                                             get_y_name.text(),
+                                                                             float(percent_data.text()),
+                                                                             if_shuffle.isChecked())
+            
+        except:
+            return
+
+        n_estimators_ = get_reg_forest_estimators.text()
+        n_estimators_ = get_int(n_estimators_,50)
+        if n_estimators_ is np.nan:
             return 
         
         n_max_depth = get_reg_forest_max_depth.text()
@@ -185,7 +194,7 @@ if __name__ == '__main__':
             return 
 
         n_max_features = get_reg_forest_max_features.text()
-        n_max_features = get_int(n_max_features,"auto")
+        n_max_features = get_int(n_max_features,2)
         if n_max_features is np.nan:
             return 
 
@@ -193,6 +202,19 @@ if __name__ == '__main__':
         n_max_samples = get_int(n_max_samples,None)
         if n_max_samples is np.nan:
             return 
+        
+        global_params = regression.params_random_forest(n_estimators_,
+                                        n_max_depth,
+                                        n_min_samples_leaf,
+                                        n_min_samples_split,
+                                        n_max_features,
+                                        n_max_samples)
+        
+        model = regression.random_forest(**global_params)
+        model.fit(X_train,y_train)
+        y_pred = model.predict(X_test)
+        
+        regression.show_metrics(y_pred,y_test,if_mse.isChecked(),if_mae.isChecked(),if_r2.isChecked())
         
     btn_browse.clicked.connect(test_train_data_find)
     btn_browse2.clicked.connect(csv_file_finder)

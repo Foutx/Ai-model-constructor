@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 def random_forest(**kwargs):
-    return RandomForestRegressor(kwargs)
+    return RandomForestRegressor(**kwargs)
 
 def line_regression(**kwargs):
     return LinearRegression(kwargs)
@@ -50,22 +50,18 @@ def params_gradient_boosting(a,b,c,d,e,f,g,h,i,j):
     }
 
 def data_test_train_split(file_path:str,y_reg:str,percent_split:float,shuffle_data:bool):
-    df = pd.read_csv(file_path)
-    all_colums = [x for x in df.columns]
-    all_colums.remove(y_reg)
-    X = df[[x for x in all_colums]]
-    y = df[y_reg]
+    try:
+        df = pd.read_csv(file_path)
+        all_colums = [x for x in df.columns]
+        all_colums.remove(y_reg)
+        X = df[[x for x in all_colums]]
+        y = df[y_reg]
 
-    X_train,X_test,y_train,y_test = train_test_split(X,y,train_size=percent_split/100,shuffle=shuffle_data)
+        X_train,X_test,y_train,y_test = train_test_split(X,y,train_size=percent_split,shuffle=shuffle_data)
 
-    return X_train, X_test, y_train, y_test
-
-# нужно вывести ещё показатели
-def regression_model(model,X_train,X_test,y_train,y_test):
-    model.fit(X_train,y_train)
-    y_pred = model.predict(X_test)
-    mse = mean_squared_error(y_pred,y_test)
-    return mse
+        return X_train, X_test, y_train, y_test
+    except:
+        return None
 
 def show_metrics(y_pred,y_test,mse:bool,mae:bool,r2:bool):
 
@@ -92,3 +88,5 @@ def show_metrics(y_pred,y_test,mse:bool,mae:bool,r2:bool):
         plt.ylabel("Предсказанные значения")
         plt.title(f"R2: {r2:.4f}")
         plt.show()
+    else:   
+        return None
