@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QDir
 
-import regression
+import numpy as np
 
+import regression
 
 if __name__ == '__main__':
 
@@ -13,11 +14,13 @@ if __name__ == '__main__':
 
     btn_browse = QPushButton('Выбрать папку')
     btn_browse2 = QPushButton('Выбрать файл')
+    btn_create_reg_forest = QPushButton('Создать модель')
 
     file_name_csv = QLabel('')
     lbl_data = QLabel('Данные:')
     lbl_model_param = QLabel('Модель:')
     lbl_metrics = QLabel('Графики на вывод:')
+    lbl_files = QLabel('Сохранение даынных (В папке: Загрузки):')
 
     get_y_name = QLineEdit()
     get_y_name.setPlaceholderText('Название целевой переменной')
@@ -27,6 +30,10 @@ if __name__ == '__main__':
     if_mse = QCheckBox(' MSE (Mean squared error)')
     if_mae = QCheckBox(' MAE (Mean absolute error)')
     if_r2 = QCheckBox(' R2 score (R2 score)')
+    if_weight_file = QCheckBox(' Файл с весами (.h5) ')
+    if_model_save = QCheckBox(' Сохранить модель (.pkl) ')
+    if_metrics = QCheckBox(' Значения метрик (.txt) ')
+
     percent_data = QLineEdit()
     percent_data.setPlaceholderText('% тестовых данных')
     percent_data.setToolTip('Процент тестовых данных в %')
@@ -70,6 +77,8 @@ if __name__ == '__main__':
     row8 = QHBoxLayout()
     row9 = QHBoxLayout()
     row10 = QHBoxLayout()
+    row11 = QHBoxLayout()
+    row12 = QHBoxLayout()
 
     row1.addWidget(choose_task)
     row2.addWidget(btn_browse)
@@ -91,6 +100,11 @@ if __name__ == '__main__':
     row9.addWidget(if_mse)
     row9.addWidget(if_mae)
     row9.addWidget(if_r2)
+    row10.addWidget(lbl_files)
+    row11.addWidget(if_weight_file)
+    row11.addWidget(if_model_save)
+    row11.addWidget(if_metrics)
+    row12.addWidget(btn_create_reg_forest)
 
     def test_train_data_find():
         # Test will be same
@@ -131,8 +145,59 @@ if __name__ == '__main__':
         elif index == 3:
             pass
 
+    def get_int(string, default=None):
+
+        if string == '':
+            print(default)
+            return default
+        
+        try:
+            value = int(string)
+            if value <= 0:  
+                raise ValueError  
+            print(value)
+            return value
+        
+        except ValueError:
+            print(f"'{string}' не является допустимым целым числом.")
+            return np.nan
+
+    def create_model_reg_forest():
+
+        n_estimators = get_reg_forest_estimators.text()
+        n_estimators = get_int(n_estimators,50)
+        if n_estimators is np.nan:
+            return 
+        
+        n_max_depth = get_reg_forest_max_depth.text()
+        n_max_depth = get_int(n_max_depth,None)
+        if n_max_depth is np.nan:
+            return 
+
+        n_min_samples_leaf = get_reg_forest_min_samples_leaf.text()
+        n_min_samples_leaf = get_int(n_min_samples_leaf,1)
+        if n_min_samples_leaf is np.nan:
+            return 
+
+        n_min_samples_split = get_reg_forest_min_samples_split.text()
+        n_min_samples_split = get_int(n_min_samples_split,2)
+        if n_min_samples_split is np.nan:
+            return 
+
+        n_max_features = get_reg_forest_max_features.text()
+        n_max_features = get_int(n_max_features,"auto")
+        if n_max_features is np.nan:
+            return 
+
+        n_max_samples = get_reg_forest_max_samples.text()
+        n_max_samples = get_int(n_max_samples,None)
+        if n_max_samples is np.nan:
+            return 
+        
     btn_browse.clicked.connect(test_train_data_find)
     btn_browse2.clicked.connect(csv_file_finder)
+    btn_create_reg_forest.clicked.connect(create_model_reg_forest)
+
     choose_task.currentIndexChanged.connect(change_task)
     choose_model_regression.currentIndexChanged.connect(change_model_regression)
 
@@ -148,6 +213,8 @@ if __name__ == '__main__':
     line.addLayout(row8)
     line.addLayout(row9)
     line.addLayout(row10)
+    line.addLayout(row11)
+    line.addLayout(row12)
 
     main.setLayout(line)
     main.show()
