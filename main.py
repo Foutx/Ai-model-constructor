@@ -17,12 +17,16 @@ if __name__ == '__main__':
     file_name_csv = QLabel('')
     lbl_data = QLabel('Данные:')
     lbl_model_param = QLabel('Модель:')
+    lbl_metrics = QLabel('Графики на вывод:')
 
     get_y_name = QLineEdit()
     get_y_name.setPlaceholderText('Название целевой переменной')
     get_y_name.setToolTip('Переменная, которую вы будете предсказывать')
 
     if_shuffle  = QCheckBox(' Перемешивать список при разделении данных ')
+    if_mse = QCheckBox(' MSE (Mean squared error)')
+    if_mae = QCheckBox(' MAE (Mean absolute error)')
+    if_r2 = QCheckBox(' R2 score (R2 score)')
     percent_data = QLineEdit()
     percent_data.setPlaceholderText('% тестовых данных')
     percent_data.setToolTip('Процент тестовых данных в %')
@@ -63,6 +67,9 @@ if __name__ == '__main__':
     row5 = QHBoxLayout()
     row6 = QHBoxLayout()
     row7 = QHBoxLayout()
+    row8 = QHBoxLayout()
+    row9 = QHBoxLayout()
+    row10 = QHBoxLayout()
 
     row1.addWidget(choose_task)
     row2.addWidget(btn_browse)
@@ -80,6 +87,10 @@ if __name__ == '__main__':
     row7.addWidget(get_reg_forest_min_samples_split)
     row7.addWidget(get_reg_forest_max_features)
     row7.addWidget(get_reg_forest_max_samples)
+    row8.addWidget(lbl_metrics)
+    row9.addWidget(if_mse)
+    row9.addWidget(if_mae)
+    row9.addWidget(if_r2)
 
     def test_train_data_find():
         # Test will be same
@@ -134,6 +145,9 @@ if __name__ == '__main__':
     line.addLayout(row5)
     line.addLayout(row6)
     line.addLayout(row7)
+    line.addLayout(row8)
+    line.addLayout(row9)
+    line.addLayout(row10)
 
     main.setLayout(line)
     main.show()
