@@ -17,8 +17,8 @@ if __name__ == '__main__':
     btn_create_reg_forest = QPushButton('Создать модель')
 
     file_name_csv = QLabel('')
-    lbl_data = QLabel('Данные:')
-    lbl_model_param = QLabel('Модель:')
+    lbl_data = QLabel('Data:')
+    lbl_model_param = QLabel('Model:')
     lbl_metrics = QLabel('Графики на вывод:')
     lbl_files = QLabel('Сохранение даынных (В папке: Загрузки):')
 
@@ -69,10 +69,19 @@ if __name__ == '__main__':
     get_reg_boosting_subsample.setPlaceholderText('subsample')
     get_reg_boosting_subsample.setToolTip('Диапазон: [0;1]')
 
+    get_reg_linear_fit_intercept = QCheckBox('fit_intercept')
+    get_reg_linear_copy_X = QCheckBox('copy_X')
+    get_reg_linear_n_jobs = QLineEdit()
+    get_reg_linear_n_jobs.setPlaceholderText('n_jobs')
+    get_reg_linear_n_jobs.setToolTip('Кол-во ядер процессора')
+
     btn_browse2.setVisible(True)
     btn_browse.setVisible(False)
     get_reg_boosting_learning_rate.setVisible(False)
     get_reg_boosting_subsample.setVisible(False)
+    get_reg_linear_fit_intercept.setVisible(False)
+    get_reg_linear_copy_X.setVisible(False)
+    get_reg_linear_n_jobs.setVisible(False)
 
     row1 = QHBoxLayout()
     row2 = QHBoxLayout()
@@ -102,6 +111,9 @@ if __name__ == '__main__':
     row6.addWidget(get_reg_forest_estimators)
     row6.addWidget(get_reg_forest_max_depth)
     row6.addWidget(get_reg_forest_min_samples_leaf)
+    row6.addWidget(get_reg_linear_fit_intercept)
+    row6.addWidget(get_reg_linear_copy_X)
+    row6.addWidget(get_reg_linear_n_jobs)
     row7.addWidget(get_reg_forest_min_samples_split)
     row7.addWidget(get_reg_forest_max_features)
     row7.addWidget(get_reg_forest_max_samples)
@@ -115,6 +127,13 @@ if __name__ == '__main__':
     row11.addWidget(if_model_save)
     row11.addWidget(if_metrics)
     row12.addWidget(btn_create_reg_forest)
+
+    def show_message(text):
+        # Show Error Message Box
+        msg = QMessageBox()
+        msg.setText(text)
+        msg.exec()
+
 
     def test_train_data_find():
         # Test will be same
@@ -147,38 +166,70 @@ if __name__ == '__main__':
     def change_model_regression(index):
 
         if index == 0:
-            get_reg_forest_max_samples.setVisible(True)
             get_reg_boosting_learning_rate.setVisible(False)
             get_reg_boosting_subsample.setVisible(False)
 
-        elif index == 1:
+            get_reg_linear_fit_intercept.setVisible(False)
+            get_reg_linear_copy_X.setVisible(False)
+            get_reg_linear_n_jobs.setVisible(False)
 
+            get_reg_forest_max_samples.setVisible(True)
+            get_reg_forest_estimators.setVisible(True)
+            get_reg_forest_max_depth.setVisible(True)
+            get_reg_forest_min_samples_leaf.setVisible(True)
+            get_reg_forest_min_samples_split.setVisible(True)
+            get_reg_forest_max_features.setVisible(True)
+
+        elif index == 1:
             get_reg_forest_max_samples.setVisible(False)
             get_reg_boosting_learning_rate.setVisible(True)
             get_reg_boosting_subsample.setVisible(True)
 
+            get_reg_linear_fit_intercept.setVisible(False)
+            get_reg_linear_copy_X.setVisible(False)
+            get_reg_linear_n_jobs.setVisible(False)
 
-        elif index == 3:
-            pass
+            get_reg_forest_estimators.setVisible(True)
+            get_reg_forest_max_depth.setVisible(True)
+            get_reg_forest_min_samples_leaf.setVisible(True)
+            get_reg_forest_min_samples_split.setVisible(True)
+            get_reg_forest_max_features.setVisible(True)
+
+        elif index == 2:
+            get_reg_linear_fit_intercept.setVisible(True)
+            get_reg_linear_copy_X.setVisible(True)
+            get_reg_linear_n_jobs.setVisible(True)
+
+            get_reg_boosting_learning_rate.setVisible(False)
+            get_reg_boosting_subsample.setVisible(False)
+
+            get_reg_forest_max_samples.setVisible(False)
+            get_reg_forest_estimators.setVisible(False)
+            get_reg_forest_max_depth.setVisible(False)
+            get_reg_forest_min_samples_leaf.setVisible(False)
+            get_reg_forest_min_samples_split.setVisible(False)
+            get_reg_forest_max_features.setVisible(False)
 
     def get_int(string, default=None):
 
         if string == '':
             print(default)
             return default
-        
+
         try:
-            value = int(string)
-            if value <= 0:  
-                raise ValueError  
-            print(value)
-            return value
-        
+            value = float(string)
+            if value.is_integer():
+                print(int(value))
+                return int(value)
+            else:
+                print(value)
+                return value
+
         except ValueError:
-            print(f"'{string}' не является допустимым целым числом.")
+            print(f"'{string}' не является допустимым числом.")
             return np.nan
 
-    def create_model_reg_forest():
+    def create_model_regression():
 
         try:
             X_train,X_test,y_train,y_test = regression.data_test_train_split(directory_csv,
@@ -187,6 +238,7 @@ if __name__ == '__main__':
                                                                              if_shuffle.isChecked())
             
         except:
+            show_message('Error to create data for model, check your values in (Data)')
             return
 
         if choose_model_regression.currentText() == 'RandomForestRegressor':
@@ -231,16 +283,79 @@ if __name__ == '__main__':
             try:
                 model = regression.random_forest(**global_params)
                 model.fit(X_train,y_train)
+                print('Лес')
 
             except:
                 print('Ошибка компиляции модели')
                 return
 
         elif choose_model_regression.currentText() == 'GradientBoostingRegressor':
-            pass
+            
+            n_estimators_ = get_reg_forest_estimators.text()
+            n_estimators_ = get_int(n_estimators_,50)
+            if n_estimators_ is np.nan:
+                return 
+            
+            n_max_depth = get_reg_forest_max_depth.text()
+            n_max_depth = get_int(n_max_depth,None)
+            if n_max_depth is np.nan:
+                return 
+
+            n_min_samples_leaf = get_reg_forest_min_samples_leaf.text()
+            n_min_samples_leaf = get_int(n_min_samples_leaf,1)
+            if n_min_samples_leaf is np.nan:
+                return 
+
+            n_min_samples_split = get_reg_forest_min_samples_split.text()
+            n_min_samples_split = get_int(n_min_samples_split,2)
+            if n_min_samples_split is np.nan:
+                return 
+
+            n_max_features = get_reg_forest_max_features.text()
+            n_max_features = get_int(n_max_features,2)
+            if n_max_features is np.nan:
+                return 
+
+            n_learning_rate = get_reg_boosting_learning_rate.text()
+            n_learning_rate = get_int(n_learning_rate,0.1)
+            if n_learning_rate is np.nan:
+                return
+            
+            n_subsample = get_reg_boosting_subsample.text()
+            n_subsample = get_int(n_subsample,1)
+            if n_subsample is np.nan:
+                return
+
+            global_params = regression.params_gradient_boosting(n_estimators_,
+                                                                n_max_depth,
+                                                                n_min_samples_leaf,
+                                                                n_min_samples_split,
+                                                                n_max_features,
+                                                                n_learning_rate,
+                                                                n_subsample)
+            
+            try:
+                model = regression.gradient_boosting(**global_params)
+                model.fit(X_train,y_train)
+                print('Градиент')
+
+            except:
+                print('Ошибка компиляции модели')
+                return
 
         else:
-            pass
+            n_jobs_ = get_reg_linear_n_jobs.text()
+            n_jobs_ = get_int(n_jobs_,None)
+            if n_jobs_ is np.nan:
+                return 
+            
+            global_params = regression.params_line_regression(not(get_reg_linear_fit_intercept.isChecked()),
+                                              not(get_reg_linear_copy_X.isChecked()),
+                                              n_jobs_)
+            
+            model = regression.line_regression(**global_params)
+            model.fit(X_train,y_train)
+            print('Линейная')
 
         y_pred = model.predict(X_test)
         
@@ -250,7 +365,7 @@ if __name__ == '__main__':
         
     btn_browse.clicked.connect(test_train_data_find)
     btn_browse2.clicked.connect(csv_file_finder)
-    btn_create_reg_forest.clicked.connect(create_model_reg_forest)
+    btn_create_reg_forest.clicked.connect(create_model_regression)
 
     choose_task.currentIndexChanged.connect(change_task)
     choose_model_regression.currentIndexChanged.connect(change_model_regression)

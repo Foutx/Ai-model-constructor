@@ -14,12 +14,12 @@ def random_forest(**kwargs):
     return RandomForestRegressor(**kwargs)
 
 def line_regression(**kwargs):
-    return LinearRegression(kwargs)
+    return LinearRegression(**kwargs)
 
 def gradient_boosting(**kwargs):
     return GradientBoostingRegressor(**kwargs)
 
-def params_random_forest(a,b,c,d,e,f):
+def params_random_forest(a,b,c,d,e,f) -> dict:
     return {
         'n_estimators':a,
         'max_depth':b,
@@ -29,15 +29,14 @@ def params_random_forest(a,b,c,d,e,f):
         'max_samples':f
         }
 
-def params_line_regression(a,b,c,d):
+def params_line_regression(a,b,c) -> dict:
     return {
         'fit_intercept':a,
-        'normalize':b,
-        'copy_X':c,
-        'n_jobs':d
+        'copy_X':b,
+        'n_jobs':c
         }
 
-def params_gradient_boosting(a,b,c,d,e,f,g):
+def params_gradient_boosting(a,b,c,d,e,f,g) -> dict:
     return {
         "n_estimators": a,
         "max_depth": b, 
