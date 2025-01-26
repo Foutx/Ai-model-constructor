@@ -30,7 +30,7 @@ if __name__ == '__main__':
     if_mse = QCheckBox(' MSE (Mean squared error)')
     if_mae = QCheckBox(' MAE (Mean absolute error)')
     if_r2 = QCheckBox(' R2 score (R2 score)')
-    if_weight_file = QCheckBox(' Файл с весами (.h5) ')
+
     if_model_save = QCheckBox(' Сохранить модель (.pkl) ')
     if_metrics = QCheckBox(' Значения метрик (.txt) ')
 
@@ -62,8 +62,17 @@ if __name__ == '__main__':
     get_reg_forest_max_samples.setPlaceholderText('max_samples')
     get_reg_forest_max_samples.setToolTip('Максимальное количество образцов')
 
+    get_reg_boosting_learning_rate = QLineEdit()
+    get_reg_boosting_learning_rate.setPlaceholderText('learning_rate')
+    get_reg_boosting_learning_rate.setToolTip('Диаопозон: [0,001;0,1]')
+    get_reg_boosting_subsample = QLineEdit()
+    get_reg_boosting_subsample.setPlaceholderText('subsample')
+    get_reg_boosting_subsample.setToolTip('Диапазон: [0;1]')
+
     btn_browse2.setVisible(True)
     btn_browse.setVisible(False)
+    get_reg_boosting_learning_rate.setVisible(False)
+    get_reg_boosting_subsample.setVisible(False)
 
     row1 = QHBoxLayout()
     row2 = QHBoxLayout()
@@ -96,12 +105,13 @@ if __name__ == '__main__':
     row7.addWidget(get_reg_forest_min_samples_split)
     row7.addWidget(get_reg_forest_max_features)
     row7.addWidget(get_reg_forest_max_samples)
+    row7.addWidget(get_reg_boosting_learning_rate)
+    row7.addWidget(get_reg_boosting_subsample)
     row8.addWidget(lbl_metrics)
     row9.addWidget(if_mse)
     row9.addWidget(if_mae)
     row9.addWidget(if_r2)
     row10.addWidget(lbl_files)
-    row11.addWidget(if_weight_file)
     row11.addWidget(if_model_save)
     row11.addWidget(if_metrics)
     row12.addWidget(btn_create_reg_forest)
@@ -137,10 +147,16 @@ if __name__ == '__main__':
     def change_model_regression(index):
 
         if index == 0:
-            pass
+            get_reg_forest_max_samples.setVisible(True)
+            get_reg_boosting_learning_rate.setVisible(False)
+            get_reg_boosting_subsample.setVisible(False)
 
         elif index == 1:
-            pass
+
+            get_reg_forest_max_samples.setVisible(False)
+            get_reg_boosting_learning_rate.setVisible(True)
+            get_reg_boosting_subsample.setVisible(True)
+
 
         elif index == 3:
             pass
@@ -173,48 +189,64 @@ if __name__ == '__main__':
         except:
             return
 
-        n_estimators_ = get_reg_forest_estimators.text()
-        n_estimators_ = get_int(n_estimators_,50)
-        if n_estimators_ is np.nan:
-            return 
-        
-        n_max_depth = get_reg_forest_max_depth.text()
-        n_max_depth = get_int(n_max_depth,None)
-        if n_max_depth is np.nan:
-            return 
+        if choose_model_regression.currentText() == 'RandomForestRegressor':
 
-        n_min_samples_leaf = get_reg_forest_min_samples_leaf.text()
-        n_min_samples_leaf = get_int(n_min_samples_leaf,1)
-        if n_min_samples_leaf is np.nan:
-            return 
+            n_estimators_ = get_reg_forest_estimators.text()
+            n_estimators_ = get_int(n_estimators_,50)
+            if n_estimators_ is np.nan:
+                return 
+            
+            n_max_depth = get_reg_forest_max_depth.text()
+            n_max_depth = get_int(n_max_depth,None)
+            if n_max_depth is np.nan:
+                return 
 
-        n_min_samples_split = get_reg_forest_min_samples_split.text()
-        n_min_samples_split = get_int(n_min_samples_split,2)
-        if n_min_samples_split is np.nan:
-            return 
+            n_min_samples_leaf = get_reg_forest_min_samples_leaf.text()
+            n_min_samples_leaf = get_int(n_min_samples_leaf,1)
+            if n_min_samples_leaf is np.nan:
+                return 
 
-        n_max_features = get_reg_forest_max_features.text()
-        n_max_features = get_int(n_max_features,2)
-        if n_max_features is np.nan:
-            return 
+            n_min_samples_split = get_reg_forest_min_samples_split.text()
+            n_min_samples_split = get_int(n_min_samples_split,2)
+            if n_min_samples_split is np.nan:
+                return 
 
-        n_max_samples = get_reg_forest_max_samples.text()
-        n_max_samples = get_int(n_max_samples,None)
-        if n_max_samples is np.nan:
-            return 
-        
-        global_params = regression.params_random_forest(n_estimators_,
-                                        n_max_depth,
-                                        n_min_samples_leaf,
-                                        n_min_samples_split,
-                                        n_max_features,
-                                        n_max_samples)
-        
-        model = regression.random_forest(**global_params)
-        model.fit(X_train,y_train)
+            n_max_features = get_reg_forest_max_features.text()
+            n_max_features = get_int(n_max_features,2)
+            if n_max_features is np.nan:
+                return 
+
+            n_max_samples = get_reg_forest_max_samples.text()
+            n_max_samples = get_int(n_max_samples,None)
+            if n_max_samples is np.nan:
+                return 
+            
+            global_params = regression.params_random_forest(n_estimators_,
+                                            n_max_depth,
+                                            n_min_samples_leaf,
+                                            n_min_samples_split,
+                                            n_max_features,
+                                            n_max_samples)
+            
+            try:
+                model = regression.random_forest(**global_params)
+                model.fit(X_train,y_train)
+
+            except:
+                print('Ошибка компиляции модели')
+                return
+
+        elif choose_model_regression.currentText() == 'GradientBoostingRegressor':
+            pass
+
+        else:
+            pass
+
         y_pred = model.predict(X_test)
         
         regression.show_metrics(y_pred,y_test,if_mse.isChecked(),if_mae.isChecked(),if_r2.isChecked())
+
+        regression.saving_model_data(model,if_model_save.isChecked(),if_metrics.isChecked(),y_test,y_pred)
         
     btn_browse.clicked.connect(test_train_data_find)
     btn_browse2.clicked.connect(csv_file_finder)

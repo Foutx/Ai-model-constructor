@@ -3,6 +3,8 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score
 
+import pickle
+
 import pandas as pd
 
 import matplotlib.pyplot as plt
@@ -15,7 +17,7 @@ def line_regression(**kwargs):
     return LinearRegression(kwargs)
 
 def gradient_boosting(**kwargs):
-    return GradientBoostingRegressor(kwargs)
+    return GradientBoostingRegressor(**kwargs)
 
 def params_random_forest(a,b,c,d,e,f):
     return {
@@ -35,18 +37,15 @@ def params_line_regression(a,b,c,d):
         'n_jobs':d
         }
 
-def params_gradient_boosting(a,b,c,d,e,f,g,h,i,j):
+def params_gradient_boosting(a,b,c,d,e,f,g):
     return {
         "n_estimators": a,
-        "learning_rate": b,
-        "max_depth": c, 
+        "max_depth": b, 
+        "min_samples_leaf": c, 
         "min_samples_split": d, 
-        "min_samples_leaf": e, 
-        "max_features": f, 
+        "max_features": e,
+        "learning_rate": f, 
         "subsample": g, 
-        "criterion": h, 
-        "random_state": i, 
-        "verbose": j
     }
 
 def data_test_train_split(file_path:str,y_reg:str,percent_split:float,shuffle_data:bool):
@@ -63,6 +62,19 @@ def data_test_train_split(file_path:str,y_reg:str,percent_split:float,shuffle_da
     except:
         return None
 
+def saving_model_data(model,b:bool,c:bool,y_test,y_pred):
+
+    if b:
+        with open('model.pkl', 'wb') as f:
+            pickle.dump(model, f)
+    if c:
+        with open('metrics.txt', 'w') as f:
+            f.write('MSE: {}\n'.format(mean_squared_error(y_pred,y_test)))
+            f.write('MAE: {}\n'.format(mean_absolute_error(y_pred,y_test)))
+            f.write('R2: {}\n'.format(r2_score(y_pred, y_pred)))
+    else:
+        return 
+
 def show_metrics(y_pred,y_test,mse:bool,mae:bool,r2:bool):
 
     if mse:
@@ -74,6 +86,7 @@ def show_metrics(y_pred,y_test,mse:bool,mae:bool,r2:bool):
         plt.title(f"MSE: {mse:.4f}")
         plt.show()
     if mae:
+        mae = mean_absolute_error(y_pred,y_test)
         plt.figure()
         plt.scatter(y_pred, y_pred)
         plt.xlabel("Фактические значения")
