@@ -14,7 +14,9 @@ if __name__ == '__main__':
 
     btn_browse = QPushButton('Выбрать папку')
     btn_browse2 = QPushButton('Выбрать файл')
-    btn_create_reg_forest = QPushButton('Создать модель')
+    btn_create_regression_csv = QPushButton('Создать модель reg csv')
+    btn_create_classification_csv = QPushButton('Создать модель class csv')
+    btn_create_classification = QPushButton('Создать модель class')
 
     file_name_csv = QLabel('')
     lbl_data = QLabel('Data:')
@@ -42,6 +44,8 @@ if __name__ == '__main__':
     choose_task.addItems(['Задача регрессии (CSV Файл)', 'Задача классификации (CSV Файл)', 'Задача классификации (Изображения)'])
     choose_model_regression = QComboBox()
     choose_model_regression.addItems(['RandomForestRegressor','GradientBoostingRegressor','LinearRegression'])
+    choose_model_classification_csv = QComboBox()
+    choose_model_classification_csv.addItems(['RandomForestClassifier','GradientBoostingClassifier'])
 
     get_reg_forest_estimators = QLineEdit()
     get_reg_forest_estimators.setPlaceholderText('n_estimators')
@@ -77,11 +81,16 @@ if __name__ == '__main__':
 
     btn_browse2.setVisible(True)
     btn_browse.setVisible(False)
+    btn_create_classification_csv.setVisible(False)
+    btn_create_classification.setVisible(False)
+
     get_reg_boosting_learning_rate.setVisible(False)
     get_reg_boosting_subsample.setVisible(False)
     get_reg_linear_fit_intercept.setVisible(False)
     get_reg_linear_copy_X.setVisible(False)
     get_reg_linear_n_jobs.setVisible(False)
+
+    choose_model_classification_csv.setVisible(False)
 
     row1 = QHBoxLayout()
     row2 = QHBoxLayout()
@@ -108,6 +117,7 @@ if __name__ == '__main__':
     row3.addWidget(if_shuffle)
     row4.addWidget(lbl_model_param)
     row5.addWidget(choose_model_regression)
+    row5.addWidget(choose_model_classification_csv)
     row6.addWidget(get_reg_forest_estimators)
     row6.addWidget(get_reg_forest_max_depth)
     row6.addWidget(get_reg_forest_min_samples_leaf)
@@ -126,7 +136,9 @@ if __name__ == '__main__':
     row10.addWidget(lbl_files)
     row11.addWidget(if_model_save)
     row11.addWidget(if_metrics)
-    row12.addWidget(btn_create_reg_forest)
+    row12.addWidget(btn_create_regression_csv)
+    row12.addWidget(btn_create_classification_csv)
+    row12.addWidget(btn_create_classification)
 
     def show_message(text):
         # Show Error Message Box
@@ -152,14 +164,29 @@ if __name__ == '__main__':
     def change_task(index):
 
         if index == 0:
+            btn_create_regression_csv.setVisible(True)
+            btn_create_classification_csv.setVisible(False)
+            btn_create_classification.setVisible(False)
             btn_browse2.setVisible(True)
             btn_browse.setVisible(False)
 
-        elif index == 0:
+            choose_model_regression.setVisible(True)
+            choose_model_classification_csv.setVisible(False)
+
+        elif index == 1:
+            btn_create_regression_csv.setVisible(False)
+            btn_create_classification_csv.setVisible(True)
+            btn_create_classification.setVisible(False)
             btn_browse2.setVisible(True)
             btn_browse.setVisible(False)
+
+            choose_model_regression.setVisible(False)
+            choose_model_classification_csv.setVisible(True)
 
         elif index == 2:
+            btn_create_regression_csv.setVisible(False)
+            btn_create_classification_csv.setVisible(False)
+            btn_create_classification.setVisible(True)
             btn_browse2.setVisible(False)
             btn_browse.setVisible(True)
 
@@ -246,31 +273,37 @@ if __name__ == '__main__':
             n_estimators_ = get_reg_forest_estimators.text()
             n_estimators_ = get_int(n_estimators_,50)
             if n_estimators_ is np.nan:
+                show_message('Error in estimators')
                 return 
             
             n_max_depth = get_reg_forest_max_depth.text()
             n_max_depth = get_int(n_max_depth,None)
             if n_max_depth is np.nan:
+                show_message('Error in max_depth')
                 return 
 
             n_min_samples_leaf = get_reg_forest_min_samples_leaf.text()
             n_min_samples_leaf = get_int(n_min_samples_leaf,1)
             if n_min_samples_leaf is np.nan:
+                show_message('Error in min_samples_leaf')
                 return 
 
             n_min_samples_split = get_reg_forest_min_samples_split.text()
             n_min_samples_split = get_int(n_min_samples_split,2)
             if n_min_samples_split is np.nan:
+                show_message('Error in min_samples_split')
                 return 
 
             n_max_features = get_reg_forest_max_features.text()
             n_max_features = get_int(n_max_features,2)
             if n_max_features is np.nan:
+                show_message('Error in max_features')
                 return 
 
             n_max_samples = get_reg_forest_max_samples.text()
             n_max_samples = get_int(n_max_samples,None)
             if n_max_samples is np.nan:
+                show_message('Error in max_samples')
                 return 
             
             global_params = regression.params_random_forest(n_estimators_,
@@ -286,7 +319,7 @@ if __name__ == '__main__':
                 print('Лес')
 
             except:
-                print('Ошибка компиляции модели')
+                show_message('Model compile error')
                 return
 
         elif choose_model_regression.currentText() == 'GradientBoostingRegressor':
@@ -294,36 +327,43 @@ if __name__ == '__main__':
             n_estimators_ = get_reg_forest_estimators.text()
             n_estimators_ = get_int(n_estimators_,50)
             if n_estimators_ is np.nan:
+                show_message('Error in estimators')
                 return 
             
             n_max_depth = get_reg_forest_max_depth.text()
             n_max_depth = get_int(n_max_depth,None)
             if n_max_depth is np.nan:
+                show_message('Error in max_depth')
                 return 
 
             n_min_samples_leaf = get_reg_forest_min_samples_leaf.text()
             n_min_samples_leaf = get_int(n_min_samples_leaf,1)
             if n_min_samples_leaf is np.nan:
+                show_message('Error in min_samples_leaf')
                 return 
 
             n_min_samples_split = get_reg_forest_min_samples_split.text()
             n_min_samples_split = get_int(n_min_samples_split,2)
             if n_min_samples_split is np.nan:
+                show_message('Error in min_samples_split')
                 return 
 
             n_max_features = get_reg_forest_max_features.text()
             n_max_features = get_int(n_max_features,2)
             if n_max_features is np.nan:
+                show_message('Error in max_features')
                 return 
 
             n_learning_rate = get_reg_boosting_learning_rate.text()
             n_learning_rate = get_int(n_learning_rate,0.1)
             if n_learning_rate is np.nan:
+                show_message('Error in learning_rate')
                 return
             
             n_subsample = get_reg_boosting_subsample.text()
             n_subsample = get_int(n_subsample,1)
             if n_subsample is np.nan:
+                show_message('Error in subsample')
                 return
 
             global_params = regression.params_gradient_boosting(n_estimators_,
@@ -340,7 +380,7 @@ if __name__ == '__main__':
                 print('Градиент')
 
             except:
-                print('Ошибка компиляции модели')
+                show_message('Model compile error')
                 return
 
         else:
@@ -352,20 +392,37 @@ if __name__ == '__main__':
             global_params = regression.params_line_regression(not(get_reg_linear_fit_intercept.isChecked()),
                                               not(get_reg_linear_copy_X.isChecked()),
                                               n_jobs_)
-            
-            model = regression.line_regression(**global_params)
-            model.fit(X_train,y_train)
-            print('Линейная')
+            try:
+
+                model = regression.line_regression(**global_params)
+                model.fit(X_train,y_train)
+                print('Линейная')
+
+            except:
+                show_message('Model compile error')
+                return
 
         y_pred = model.predict(X_test)
         
         regression.show_metrics(y_pred,y_test,if_mse.isChecked(),if_mae.isChecked(),if_r2.isChecked())
 
         regression.saving_model_data(model,if_model_save.isChecked(),if_metrics.isChecked(),y_test,y_pred)
+    
+    def create_model_classification_csv():
+        try:
+            X_train,X_test,y_train,y_test = regression.data_test_train_split(directory_csv,
+                                                                             get_y_name.text(),
+                                                                             float(percent_data.text()),
+                                                                             if_shuffle.isChecked())
+            
+        except:
+            show_message('Error to create data for model, check your values in (Data)')
+            return
         
     btn_browse.clicked.connect(test_train_data_find)
     btn_browse2.clicked.connect(csv_file_finder)
-    btn_create_reg_forest.clicked.connect(create_model_regression)
+    btn_create_regression_csv.clicked.connect(create_model_regression)
+    btn_create_classification_csv.clicked.connect(create_model_classification_csv)
 
     choose_task.currentIndexChanged.connect(change_task)
     choose_model_regression.currentIndexChanged.connect(change_model_regression)
