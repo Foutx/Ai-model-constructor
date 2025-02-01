@@ -47,6 +47,15 @@ def params_gradient_boosting(a,b,c,d,e,f,g) -> dict:
         "subsample": g, 
     }
 
+def params_random_forest_class(a,b,c,d,e):
+    return {
+    'n_estimators': a,
+    'max_depth': b,
+    'min_samples_leaf': c,
+    'min_samples_split': d,
+    'max_samples': e
+}
+
 def data_test_train_split(file_path:str,y_reg:str,percent_split:float,shuffle_data:bool):
     try:
         df = pd.read_csv(file_path)
@@ -74,7 +83,7 @@ def saving_model_data(model,b:bool,c:bool,y_test,y_pred):
     else:
         return 
 
-def show_metrics(y_pred,y_test,mse:bool,mae:bool,r2:bool):
+def show_metrics_regression(y_pred,y_test,mse:bool,mae:bool,r2:bool):
 
     if mse:
         mse = mean_squared_error(y_pred,y_test)

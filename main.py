@@ -161,6 +161,7 @@ if __name__ == '__main__':
         if directory_csv:
             file_name_csv.setText(f'CSV файл - {directory_csv}')
 
+    # Change task of Ai
     def change_task(index):
 
         if index == 0:
@@ -173,6 +174,26 @@ if __name__ == '__main__':
             choose_model_regression.setVisible(True)
             choose_model_classification_csv.setVisible(False)
 
+            # Params
+            get_reg_boosting_learning_rate.setVisible(False)
+            get_reg_boosting_subsample.setVisible(False)
+
+            get_reg_linear_fit_intercept.setVisible(False)
+            get_reg_linear_copy_X.setVisible(False)
+            get_reg_linear_n_jobs.setVisible(False)
+
+            get_reg_forest_max_samples.setVisible(True)
+            get_reg_forest_estimators.setVisible(True)
+            get_reg_forest_max_depth.setVisible(True)
+            get_reg_forest_min_samples_leaf.setVisible(True)
+            get_reg_forest_min_samples_split.setVisible(True)
+            get_reg_forest_max_features.setVisible(True)
+
+            # Metrics
+            if_mse.setVisible(True)
+            if_mae.setVisible(True)
+            if_r2.setVisible(True)
+
         elif index == 1:
             btn_create_regression_csv.setVisible(False)
             btn_create_classification_csv.setVisible(True)
@@ -183,6 +204,26 @@ if __name__ == '__main__':
             choose_model_regression.setVisible(False)
             choose_model_classification_csv.setVisible(True)
 
+            # Params
+            get_reg_boosting_learning_rate.setVisible(False)
+            get_reg_boosting_subsample.setVisible(False)
+
+            get_reg_linear_fit_intercept.setVisible(False)
+            get_reg_linear_copy_X.setVisible(False)
+            get_reg_linear_n_jobs.setVisible(False)
+
+            get_reg_forest_max_samples.setVisible(True)
+            get_reg_forest_estimators.setVisible(True)
+            get_reg_forest_max_depth.setVisible(True)
+            get_reg_forest_min_samples_leaf.setVisible(True)
+            get_reg_forest_min_samples_split.setVisible(True)
+            get_reg_forest_max_features.setVisible(False)
+
+            # Metrics
+            if_mse.setVisible(False)
+            if_mae.setVisible(False)
+            if_r2.setVisible(False)
+
         elif index == 2:
             btn_create_regression_csv.setVisible(False)
             btn_create_classification_csv.setVisible(False)
@@ -190,6 +231,7 @@ if __name__ == '__main__':
             btn_browse2.setVisible(False)
             btn_browse.setVisible(True)
 
+    # Change regression model
     def change_model_regression(index):
 
         if index == 0:
@@ -237,6 +279,14 @@ if __name__ == '__main__':
             get_reg_forest_min_samples_split.setVisible(False)
             get_reg_forest_max_features.setVisible(False)
 
+    def change_model_classififcation_csv(index):
+        
+        if index == 0:
+            pass
+
+        if index == 1:
+            pass
+
     def get_int(string, default=None):
 
         if string == '':
@@ -256,6 +306,7 @@ if __name__ == '__main__':
             print(f"'{string}' не является допустимым числом.")
             return np.nan
 
+    # Create regression models
     def create_model_regression():
 
         try:
@@ -404,10 +455,11 @@ if __name__ == '__main__':
 
         y_pred = model.predict(X_test)
         
-        regression.show_metrics(y_pred,y_test,if_mse.isChecked(),if_mae.isChecked(),if_r2.isChecked())
+        regression.show_metrics_regression(y_pred,y_test,if_mse.isChecked(),if_mae.isChecked(),if_r2.isChecked())
 
         regression.saving_model_data(model,if_model_save.isChecked(),if_metrics.isChecked(),y_test,y_pred)
     
+    # Create CSV classification models
     def create_model_classification_csv():
         try:
             X_train,X_test,y_train,y_test = regression.data_test_train_split(directory_csv,
@@ -418,6 +470,9 @@ if __name__ == '__main__':
         except:
             show_message('Error to create data for model, check your values in (Data)')
             return
+        
+        if choose_model_classification_csv.currentText() == "RandomForestClassifier":
+            pass
         
     btn_browse.clicked.connect(test_train_data_find)
     btn_browse2.clicked.connect(csv_file_finder)
