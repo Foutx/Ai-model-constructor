@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score
+from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score,accuracy_score, f1_score, roc_auc_score, confusion_matrix
 
 import pickle
 
@@ -111,3 +111,6 @@ def show_metrics_regression(y_pred,y_test,mse:bool,mae:bool,r2:bool):
         plt.show()
     else:   
         return None
+
+def show_metrics_regression_class(y_pred,y_test,accuracy:bool,f1:bool,auc_score:bool,confusion_matrix_:bool):
+    pass
