@@ -33,8 +33,15 @@ if __name__ == '__main__':
     if_mae = QCheckBox(' MAE (Mean absolute error)')
     if_r2 = QCheckBox(' R2 score (R2 score)')
 
-    if_model_save = QCheckBox(' Сохранить модель (.pkl) ')
-    if_metrics = QCheckBox(' Значения метрик (.txt) ')
+    if_f1 = QCheckBox(' F1 score (F1 score) ')
+    if_accuracy = QCheckBox(' Accuracy_score (Accuracy) ')
+    if_roc_auc_score = QCheckBox(' Roc_auc_score (ROC auc score) ')
+    if_confusion_matrix = QCheckBox(' Confusion_matrix (Confusion Matrix) ')
+
+    if_model_save_regression = QCheckBox(' Сохранить модель (.pkl) ')
+    if_metrics_regression = QCheckBox(' Значения метрик (.txt) ')
+    if_model_save_class = QCheckBox(' Сохранить модель (.pkl) ')
+    if_metrics_class = QCheckBox(' Значения метрик (.txt) ')
 
     percent_data = QLineEdit()
     percent_data.setPlaceholderText('% тестовых данных /100')
@@ -90,6 +97,14 @@ if __name__ == '__main__':
     get_reg_linear_copy_X.setVisible(False)
     get_reg_linear_n_jobs.setVisible(False)
 
+    if_accuracy.setVisible(False)
+    if_f1.setVisible(False)
+    if_roc_auc_score.setVisible(False)
+    if_confusion_matrix.setVisible(False)
+
+    if_model_save_class.setVisible(False)
+    if_metrics_class.setVisible(False)
+
     choose_model_classification_csv.setVisible(False)
 
     row1 = QHBoxLayout()
@@ -133,9 +148,15 @@ if __name__ == '__main__':
     row9.addWidget(if_mse)
     row9.addWidget(if_mae)
     row9.addWidget(if_r2)
+    row9.addWidget(if_accuracy)
+    row9.addWidget(if_f1)
+    row9.addWidget(if_roc_auc_score)
+    row9.addWidget(if_confusion_matrix)
     row10.addWidget(lbl_files)
-    row11.addWidget(if_model_save)
-    row11.addWidget(if_metrics)
+    row11.addWidget(if_model_save_regression)
+    row11.addWidget(if_metrics_regression)
+    row11.addWidget(if_model_save_class)
+    row11.addWidget(if_metrics_class)
     row12.addWidget(btn_create_regression_csv)
     row12.addWidget(btn_create_classification_csv)
     row12.addWidget(btn_create_classification)
@@ -194,6 +215,20 @@ if __name__ == '__main__':
             if_mae.setVisible(True)
             if_r2.setVisible(True)
 
+            if_accuracy.setVisible(False)
+            if_f1.setVisible(False)
+            if_roc_auc_score.setVisible(False)
+            if_confusion_matrix.setVisible(False)
+            if_accuracy.setChecked(False)
+            if_f1.setChecked(False)
+            if_roc_auc_score.setChecked(False)
+            if_confusion_matrix.setChecked(False)
+
+            if_model_save_regression.setVisible(True)
+            if_metrics_regression.setVisible(True)
+            if_model_save_class.setVisible(False)
+            if_metrics_class.setVisible(False)
+
         elif index == 1:
             btn_create_regression_csv.setVisible(False)
             btn_create_classification_csv.setVisible(True)
@@ -223,6 +258,19 @@ if __name__ == '__main__':
             if_mse.setVisible(False)
             if_mae.setVisible(False)
             if_r2.setVisible(False)
+            if_mse.setChecked(False)
+            if_mae.setChecked(False)
+            if_r2.setChecked(False)
+
+            if_accuracy.setVisible(True)
+            if_f1.setVisible(True)
+            if_roc_auc_score.setVisible(True)
+            if_confusion_matrix.setVisible(True)
+
+            if_model_save_regression.setVisible(False)
+            if_metrics_regression.setVisible(False)
+            if_model_save_class.setVisible(True)
+            if_metrics_class.setVisible(True)
 
         elif index == 2:
             btn_create_regression_csv.setVisible(False)
@@ -457,7 +505,7 @@ if __name__ == '__main__':
         
         regression.show_metrics_regression(y_pred,y_test,if_mse.isChecked(),if_mae.isChecked(),if_r2.isChecked())
 
-        regression.saving_model_data(model,if_model_save.isChecked(),if_metrics.isChecked(),y_test,y_pred)
+        regression.saving_model_data_regression(model,if_model_save_regression.isChecked(),if_metrics_regression.isChecked(),y_test,y_pred)
     
     # Create CSV classification models
     def create_model_classification_csv():
@@ -472,7 +520,56 @@ if __name__ == '__main__':
             return
         
         if choose_model_classification_csv.currentText() == "RandomForestClassifier":
-            pass
+
+            n_estimators_ = get_reg_forest_estimators.text()
+            n_estimators_ = get_int(n_estimators_,50)
+            if n_estimators_ is np.nan:
+                show_message('Error in estimators')
+                return 
+            
+            n_max_depth = get_reg_forest_max_depth.text()
+            n_max_depth = get_int(n_max_depth,None)
+            if n_max_depth is np.nan:
+                show_message('Error in max_depth')
+                return 
+
+            n_min_samples_leaf = get_reg_forest_min_samples_leaf.text()
+            n_min_samples_leaf = get_int(n_min_samples_leaf,1)
+            if n_min_samples_leaf is np.nan:
+                show_message('Error in min_samples_leaf')
+                return 
+
+            n_min_samples_split = get_reg_forest_min_samples_split.text()
+            n_min_samples_split = get_int(n_min_samples_split,2)
+            if n_min_samples_split is np.nan:
+                show_message('Error in min_samples_split')
+                return 
+
+            n_max_samples = get_reg_forest_max_samples.text()
+            n_max_samples = get_int(n_max_samples,None)
+            if n_max_samples is np.nan:
+                show_message('Error in max_samples')
+                return 
+            
+            global_params = regression.params_random_forest_class(n_estimators_,
+                                                                  n_max_depth,
+                                                                  n_min_samples_leaf,
+                                                                  n_min_samples_split,
+                                                                  n_max_samples)
+            try:
+                model = regression.random_forest_class(**global_params)
+                model.fit(X_train,y_train)
+                print('Лесс классификатор')
+
+            except:
+                show_message('Model compile error')
+                return
+
+            y_pred = model.predict(X_test)
+
+            regression.show_metrics_csv_class(y_pred,y_test,if_accuracy.isChecked(),if_f1.isChecked(),if_roc_auc_score.isChecked(),if_confusion_matrix.isChecked())
+
+            regression.saving_model_data_csv_class(model,if_model_save_class.isChecked(),if_metrics_class.isChecked(),y_test,y_pred)
         
     btn_browse.clicked.connect(test_train_data_find)
     btn_browse2.clicked.connect(csv_file_finder)

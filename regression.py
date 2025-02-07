@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, RandomForestClassifier
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score,accuracy_score, f1_score, roc_auc_score, confusion_matrix
+from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score,accuracy_score, f1_score, roc_auc_score, confusion_matrix,ConfusionMatrixDisplay
 
 import pickle
 
@@ -9,6 +9,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
+import numpy as np
 
 def random_forest(**kwargs):
     return RandomForestRegressor(**kwargs)
@@ -18,6 +19,9 @@ def line_regression(**kwargs):
 
 def gradient_boosting(**kwargs):
     return GradientBoostingRegressor(**kwargs)
+
+def random_forest_class(**kwargs):
+    return RandomForestClassifier(**kwargs)
 
 def params_random_forest(a,b,c,d,e,f) -> dict:
     return {
@@ -70,7 +74,7 @@ def data_test_train_split(file_path:str,y_reg:str,percent_split:float,shuffle_da
     except:
         return None
 
-def saving_model_data(model,b:bool,c:bool,y_test,y_pred):
+def saving_model_data_regression(model,b:bool,c:bool,y_test,y_pred):
 
     if b:
         with open('model.pkl', 'wb') as f:
@@ -82,6 +86,10 @@ def saving_model_data(model,b:bool,c:bool,y_test,y_pred):
             f.write('R2: {}\n'.format(r2_score(y_pred, y_pred)))
     else:
         return 
+
+def saving_model_data_csv_class(model,b:bool,c:bool,y_test,y_pred):
+    "Надо написать функцию для записи модели и данных метрик в txt файл"
+    pass
 
 def show_metrics_regression(y_pred,y_test,mse:bool,mae:bool,r2:bool):
 
@@ -112,5 +120,40 @@ def show_metrics_regression(y_pred,y_test,mse:bool,mae:bool,r2:bool):
     else:   
         return None
 
-def show_metrics_regression_class(y_pred,y_test,accuracy:bool,f1:bool,auc_score:bool,confusion_matrix_:bool):
-    pass
+def show_metrics_csv_class(y_pred,y_test,accuracy:bool,f1:bool,auc_score:bool,confusion_matrix_:bool):
+    if accuracy:
+        accuracy = accuracy_score(y_test, y_pred)
+        plt.figure(figsize=(8, 6))
+        plt.plot(accuracy)  # Показываем только одно значение accuracy
+        plt.xlabel("Результат")
+        plt.ylabel("Accuracy")
+        plt.title(f"Accuracy: {accuracy:.4f}")
+        plt.grid(True)
+        plt.show()
+    if f1_score:
+        f1 = f1_score(y_test, y_pred, average='weighted')
+        plt.figure(figsize=(6, 4))
+        plt.bar(['F1-score'], [f1])
+        plt.ylabel("F1-score")
+        plt.ylim(0, 1)
+        plt.title(f"F1-score (weighted): {f1:.4f}")
+        plt.grid(True, axis='y')
+        plt.show()
+    if auc_score:
+        try:
+            roc_auc = roc_auc_score(y_test, y_pred)
+        except ValueError:
+            roc_auc = np.nan
+        plt.figure(figsize=(6, 4))
+        plt.bar(['ROC AUC'], [roc_auc])
+        plt.ylabel("ROC AUC")
+        plt.ylim(0, 1)
+        plt.title(f"ROC AUC: {roc_auc:.4f}")
+        plt.grid(True, axis='y')
+        plt.show()
+    if confusion_matrix_:
+        cm = confusion_matrix(y_test, y_pred)
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+        disp.plot(cmap='Blues', values_format='d') 
+        plt.title("Confusion Matrix")
+        plt.show()
