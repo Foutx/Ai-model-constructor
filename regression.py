@@ -1,13 +1,15 @@
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, RandomForestClassifier
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score,accuracy_score, f1_score, roc_auc_score, confusion_matrix,ConfusionMatrixDisplay
+from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score,accuracy_score, f1_score, roc_auc_score, confusion_matrix,ConfusionMatrixDisplay, classification_report, explained_variance_score, mean_absolute_percentage_error 
 
 import pickle
 
 import pandas as pd
 
 import matplotlib.pyplot as plt
+
+from tabulate import tabulate
 
 import numpy as np
 
@@ -80,16 +82,74 @@ def saving_model_data_regression(model,b:bool,c:bool,y_test,y_pred):
         with open('model.pkl', 'wb') as f:
             pickle.dump(model, f)
     if c:
-        with open('metrics.txt', 'w') as f:
-            f.write('MSE: {}\n'.format(mean_squared_error(y_pred,y_test)))
-            f.write('MAE: {}\n'.format(mean_absolute_error(y_pred,y_test)))
-            f.write('R2: {}\n'.format(r2_score(y_pred, y_pred)))
-    else:
-        return 
+        try:
+            mse = mean_squared_error(y_test, y_pred)
+            mae = mean_absolute_error(y_test, y_pred)
+            r2 = r2_score(y_test, y_pred)  # Исправлено: y_test, y_pred
+            explained_variance = explained_variance_score(y_test, y_pred)
+            mape = mean_absolute_percentage_error(y_test, y_pred)
 
-def saving_model_data_csv_class(model,b:bool,c:bool,y_test,y_pred):
-    "Надо написать функцию для записи модели и данных метрик в txt файл"
-    pass
+
+            metrics = {
+                'MSE': mse,
+                'MAE': mae,
+                'R2': r2,
+                'Explained Variance': explained_variance,
+                'MAPE': mape
+            }
+
+
+            # Используем tabulate для форматирования метрик в таблицу
+            metrics_table = tabulate(metrics.items(), headers=["Metric", "Value"], tablefmt="grid")
+
+            with open('metrics.txt', 'w') as f:
+                f.write("==================== Regression metrics ====================\n\n")
+                f.write(metrics_table + "\n")
+
+        except ValueError as e:
+            with open('metrics.txt', 'w') as f:
+                f.write(f"Error: {e}\n")
+        else:
+            return 
+
+def saving_model_data_csv_class(model,b:bool,c:bool,y_test,y_pred,y_prob=None):
+    if c:
+        try:
+            accuracy = accuracy_score(y_test, y_pred)
+            f1 = f1_score(y_test, y_pred, average='weighted')
+
+            conf_matrix = confusion_matrix(y_test, y_pred)
+            class_report = classification_report(y_test, y_pred)
+
+            # Используем tabulate для форматирования confusion matrix
+            conf_matrix_table = tabulate(conf_matrix, headers=["Predicted 0", "Predicted 1"], tablefmt="grid")
+
+            with open('metrics.txt', 'w') as f:
+                f.write("==================== Classification metrics ====================\n\n")
+                f.write('Accuracy: {:.4f}\n'.format(accuracy))
+                f.write('F1-score (weighted): {:.4f}\n\n'.format(f1))
+
+                if y_prob is not None:
+                    try:
+                        roc_auc = roc_auc_score(y_test, y_prob, multi_class='ovr')
+                        f.write('ROC AUC (one-vs-rest): {:.4f}\n\n'.format(roc_auc))
+                    except ValueError as e:
+                        f.write(f"Error to calculate ROC AUC: {e}\n\n")
+
+
+                f.write("Confusion Matrix:\n")
+                f.write(conf_matrix_table + "\n\n")
+
+                f.write("Classification Report:\n")
+                f.write(class_report + "\n")
+
+        except ValueError as e:
+            with open('metrics.txt', 'w') as f:
+                f.write(f"Error: {e}\n")
+            
+    if b:
+        with open('model.pkl', 'wb') as f:
+            pickle.dump(model, f)
 
 def show_metrics_regression(y_pred,y_test,mse:bool,mae:bool,r2:bool):
 
@@ -130,7 +190,7 @@ def show_metrics_csv_class(y_pred,y_test,accuracy:bool,f1:bool,auc_score:bool,co
         plt.title(f"Accuracy: {accuracy:.4f}")
         plt.grid(True)
         plt.show()
-    if f1_score:
+    if f1:
         f1 = f1_score(y_test, y_pred, average='weighted')
         plt.figure(figsize=(6, 4))
         plt.bar(['F1-score'], [f1])

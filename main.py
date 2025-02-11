@@ -10,7 +10,7 @@ if __name__ == '__main__':
     app = QApplication([])
     main = QWidget()
     line = QVBoxLayout()
-    main.setGeometry(600,500,600,500)
+    main.setFixedSize(600,400)
 
     btn_browse = QPushButton('Выбрать папку')
     btn_browse2 = QPushButton('Выбрать файл')
