@@ -12,79 +12,122 @@ if __name__ == '__main__':
     line = QVBoxLayout()
     main.setFixedSize(600,400)
 
-    btn_browse = QPushButton('Выбрать папку')
-    btn_browse2 = QPushButton('Выбрать файл')
-    btn_create_regression_csv = QPushButton('Создать модель reg csv')
-    btn_create_classification_csv = QPushButton('Создать модель class csv')
-    btn_create_classification = QPushButton('Создать модель class')
+    app.setStyleSheet("""
+    QWidget {
+        background-color: #f4f4f4;
+        font-size: 14px;
+    }
+    
+    QPushButton {
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 8px;
+        padding: 5px 8px;
+        font-size: 14px;
+    }
+    
+    QPushButton:hover {
+        background-color: #45a049;
+    }
 
+    QLineEdit, QComboBox {
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 2px 5px;
+        line-height: 20px;
+    }
+
+    QLabel {
+        font-weight: bold;
+        padding-bottom: 5px;  /* Еще выше */
+    }
+
+    QCheckBox {
+        spacing: 5px;
+        padding-bottom: 5px;  /* Еще выше */
+    }
+""")
+
+
+
+
+
+
+    btn_browse = QPushButton('Select Folder')
+    btn_browse2 = QPushButton('Select File')
+    btn_create_regression_csv = QPushButton('Create Regression Model (CSV)')
+    btn_create_classification_csv = QPushButton('Create Classification Model (CSV)')
+    btn_create_classification = QPushButton('Create Classification Model')
+    
     file_name_csv = QLabel('')
     lbl_data = QLabel('Data:')
     lbl_model_param = QLabel('Model:')
-    lbl_metrics = QLabel('Графики на вывод:')
-    lbl_files = QLabel('Сохранение даынных (В папке: Загрузки):')
-
+    lbl_metrics = QLabel('Output Graphs:')
+    lbl_files = QLabel('Save Data (In main folder):')
+    
     get_y_name = QLineEdit()
-    get_y_name.setPlaceholderText('Название целевой переменной')
-    get_y_name.setToolTip('Переменная, которую вы будете предсказывать')
-
-    if_shuffle  = QCheckBox(' Перемешивать список при разделении данных ')
-    if_mse = QCheckBox(' MSE (Mean squared error)')
-    if_mae = QCheckBox(' MAE (Mean absolute error)')
-    if_r2 = QCheckBox(' R2 score (R2 score)')
-
-    if_f1 = QCheckBox(' F1 score (F1 score) ')
-    if_accuracy = QCheckBox(' Accuracy_score (Accuracy) ')
-    if_roc_auc_score = QCheckBox(' Roc_auc_score (ROC auc score) ')
-    if_confusion_matrix = QCheckBox(' Confusion_matrix (Confusion Matrix) ')
-
-    if_model_save_regression = QCheckBox(' Сохранить модель (.pkl) ')
-    if_metrics_regression = QCheckBox(' Значения метрик (.txt) ')
-    if_model_save_class = QCheckBox(' Сохранить модель (.pkl) ')
-    if_metrics_class = QCheckBox(' Значения метрик (.txt) ')
-
+    get_y_name.setPlaceholderText('Target Variable Name')
+    get_y_name.setToolTip('The variable you want to predict')
+    
+    if_shuffle  = QCheckBox(' Shuffle the dataset when splitting ')
+    if_mse = QCheckBox(' MSE (Mean Squared Error)')
+    if_mae = QCheckBox(' MAE (Mean Absolute Error)')
+    if_r2 = QCheckBox(' R2 Score')
+    
+    if_f1 = QCheckBox(' F1 Score ')
+    if_accuracy = QCheckBox(' Accuracy Score ')
+    if_roc_auc_score = QCheckBox(' ROC AUC Score ')
+    if_confusion_matrix = QCheckBox(' Confusion Matrix ')
+    
+    if_model_save_regression = QCheckBox(' Save Model (.pkl) ')
+    if_metrics_regression = QCheckBox(' Save Metrics (.txt) ')
+    if_model_save_class = QCheckBox(' Save Model (.pkl) ')
+    if_metrics_class = QCheckBox(' Save Metrics (.txt) ')
+    
     percent_data = QLineEdit()
-    percent_data.setPlaceholderText('% тестовых данных /100')
-    percent_data.setToolTip('Процент тестовых данных в %/100')
-
+    percent_data.setPlaceholderText('% of Test Data /100')
+    percent_data.setToolTip('Percentage of test data in %/100')
+    
     choose_task = QComboBox()
-    choose_task.addItems(['Задача регрессии (CSV Файл)', 'Задача классификации (CSV Файл)', 'Задача классификации (Изображения)'])
+    choose_task.addItems(['Regression Task (CSV File)', 'Classification Task (CSV File)', 'Classification Task (Images)'])
     choose_model_regression = QComboBox()
-    choose_model_regression.addItems(['RandomForestRegressor','GradientBoostingRegressor','LinearRegression'])
+    choose_model_regression.addItems(['RandomForestRegressor', 'GradientBoostingRegressor', 'LinearRegression'])
     choose_model_classification_csv = QComboBox()
-    choose_model_classification_csv.addItems(['RandomForestClassifier','GradientBoostingClassifier'])
-
+    choose_model_classification_csv.addItems(['RandomForestClassifier', 'GradientBoostingClassifier'])
+    
     get_reg_forest_estimators = QLineEdit()
     get_reg_forest_estimators.setPlaceholderText('n_estimators')
-    get_reg_forest_estimators.setToolTip('Количество случайных деревьев')
+    get_reg_forest_estimators.setToolTip('Number of random trees')
     get_reg_forest_max_depth = QLineEdit()
     get_reg_forest_max_depth.setPlaceholderText('max_depth')
-    get_reg_forest_max_depth.setToolTip('Максимальная глубина дерева')
+    get_reg_forest_max_depth.setToolTip('Maximum tree depth')
     get_reg_forest_min_samples_leaf = QLineEdit()
     get_reg_forest_min_samples_leaf.setPlaceholderText('min_samples_leaf')
-    get_reg_forest_min_samples_leaf.setToolTip('Минимальное кол-во объектов в листе дерева')
+    get_reg_forest_min_samples_leaf.setToolTip('Minimum number of samples per leaf')
     get_reg_forest_min_samples_split = QLineEdit()
     get_reg_forest_min_samples_split.setPlaceholderText('min_samples_split')
-    get_reg_forest_min_samples_split.setToolTip('Минимальное кол-во признаков для разбиения')
+    get_reg_forest_min_samples_split.setToolTip('Minimum number of features for a split')
     get_reg_forest_max_features = QLineEdit()
     get_reg_forest_max_features.setPlaceholderText('max_features')
-    get_reg_forest_max_features.setToolTip('Максимальное количество признаков')
+    get_reg_forest_max_features.setToolTip('Maximum number of features')
     get_reg_forest_max_samples = QLineEdit()
     get_reg_forest_max_samples.setPlaceholderText('max_samples')
-    get_reg_forest_max_samples.setToolTip('Максимальное количество образцов')
-
+    get_reg_forest_max_samples.setToolTip('Maximum number of samples')
+    
     get_reg_boosting_learning_rate = QLineEdit()
     get_reg_boosting_learning_rate.setPlaceholderText('learning_rate')
-    get_reg_boosting_learning_rate.setToolTip('Диаопозон: [0,001;0,1]')
+    get_reg_boosting_learning_rate.setToolTip('Range: [0.001; 0.1]')
     get_reg_boosting_subsample = QLineEdit()
     get_reg_boosting_subsample.setPlaceholderText('subsample')
-    get_reg_boosting_subsample.setToolTip('Диапазон: [0;1]')
-
+    get_reg_boosting_subsample.setToolTip('Range: [0;1]')
+    
     get_reg_linear_fit_intercept = QCheckBox('fit_intercept')
     get_reg_linear_copy_X = QCheckBox('copy_X')
     get_reg_linear_n_jobs = QLineEdit()
     get_reg_linear_n_jobs.setPlaceholderText('n_jobs')
-    get_reg_linear_n_jobs.setToolTip('Кол-во ядер процессора')
+    get_reg_linear_n_jobs.setToolTip('Number of CPU cores')
+
 
     btn_browse2.setVisible(True)
     btn_browse.setVisible(False)
@@ -229,6 +272,8 @@ if __name__ == '__main__':
             if_model_save_class.setVisible(False)
             if_metrics_class.setVisible(False)
 
+            choose_model_regression.setCurrentIndex(0)
+
         elif index == 1:
             btn_create_regression_csv.setVisible(False)
             btn_create_classification_csv.setVisible(True)
@@ -271,6 +316,8 @@ if __name__ == '__main__':
             if_metrics_regression.setVisible(False)
             if_model_save_class.setVisible(True)
             if_metrics_class.setVisible(True)
+
+            choose_model_classification_csv.setCurrentIndex(0)
 
         elif index == 2:
             btn_create_regression_csv.setVisible(False)
@@ -330,10 +377,18 @@ if __name__ == '__main__':
     def change_model_classififcation_csv(index):
         
         if index == 0:
-            pass
+            get_reg_forest_max_samples.setVisible(True)
+
+            get_reg_forest_max_features.setVisible(False)
+            get_reg_boosting_learning_rate.setVisible(False)
+            get_reg_boosting_subsample.setVisible(False)
 
         if index == 1:
-            pass
+            get_reg_forest_max_samples.setVisible(False)
+
+            get_reg_forest_max_features.setVisible(True)
+            get_reg_boosting_learning_rate.setVisible(True)
+            get_reg_boosting_subsample.setVisible(True)
 
     def get_int(string, default=None):
 
@@ -474,7 +529,7 @@ if __name__ == '__main__':
                                                                 n_subsample)
             
             try:
-                model = regression.gradient_boosting(**global_params)
+                model = regression.gradient_boosting_regression(**global_params)
                 model.fit(X_train,y_train)
                 print('Градиент')
 
@@ -571,6 +626,72 @@ if __name__ == '__main__':
 
             regression.saving_model_data_csv_class(model,if_model_save_class.isChecked(),if_metrics_class.isChecked(),y_test,y_pred)
         
+        if choose_model_classification_csv.currentText() == "GradientBoostingClassifier":
+
+            n_estimators_ = get_reg_forest_estimators.text()
+            n_estimators_ = get_int(n_estimators_,50)
+            if n_estimators_ is np.nan:
+                show_message('Error in estimators')
+                return 
+            
+            n_max_depth = get_reg_forest_max_depth.text()
+            n_max_depth = get_int(n_max_depth,None)
+            if n_max_depth is np.nan:
+                show_message('Error in max_depth')
+                return 
+
+            n_min_samples_leaf = get_reg_forest_min_samples_leaf.text()
+            n_min_samples_leaf = get_int(n_min_samples_leaf,1)
+            if n_min_samples_leaf is np.nan:
+                show_message('Error in min_samples_leaf')
+                return 
+
+            n_min_samples_split = get_reg_forest_min_samples_split.text()
+            n_min_samples_split = get_int(n_min_samples_split,2)
+            if n_min_samples_split is np.nan:
+                show_message('Error in min_samples_split')
+                return 
+
+            n_max_features = get_reg_forest_max_features.text()
+            n_max_features = get_int(n_max_features,2)
+            if n_max_features is np.nan:
+                show_message('Error in max_features')
+                return 
+
+            n_learning_rate = get_reg_boosting_learning_rate.text()
+            n_learning_rate = get_int(n_learning_rate,0.1)
+            if n_learning_rate is np.nan:
+                show_message('Error in learning_rate')
+                return
+            
+            n_subsample = get_reg_boosting_subsample.text()
+            n_subsample = get_int(n_subsample,1)
+            if n_subsample is np.nan:
+                show_message('Error in subsample')
+                return
+
+            global_params = regression.params_gradient_boosting(n_estimators_,
+                                                                n_max_depth,
+                                                                n_min_samples_leaf,
+                                                                n_min_samples_split,
+                                                                n_max_features,
+                                                                n_learning_rate,
+                                                                n_subsample)
+            
+            try:
+                model = regression.gradient_boosting_class(**global_params)
+                model.fit(X_train,y_train)
+                print('Градиент классификатор')
+
+            except:
+                show_message('Model compile error')
+                return
+            y_pred = model.predict(X_test)
+
+            regression.show_metrics_csv_class(y_pred,y_test,if_accuracy.isChecked(),if_f1.isChecked(),if_roc_auc_score.isChecked(),if_confusion_matrix.isChecked())
+
+            regression.saving_model_data_csv_class(model,if_model_save_class.isChecked(),if_metrics_class.isChecked(),y_test,y_pred)
+        
     btn_browse.clicked.connect(test_train_data_find)
     btn_browse2.clicked.connect(csv_file_finder)
     btn_create_regression_csv.clicked.connect(create_model_regression)
@@ -578,6 +699,7 @@ if __name__ == '__main__':
 
     choose_task.currentIndexChanged.connect(change_task)
     choose_model_regression.currentIndexChanged.connect(change_model_regression)
+    choose_model_classification_csv.currentIndexChanged.connect(change_model_classififcation_csv)
 
     line.addLayout(row1)
     line.addLayout(row2)

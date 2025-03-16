@@ -1,5 +1,5 @@
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error,mean_absolute_error,r2_score,accuracy_score, f1_score, roc_auc_score, confusion_matrix,ConfusionMatrixDisplay, classification_report, explained_variance_score, mean_absolute_percentage_error 
 
@@ -19,11 +19,14 @@ def random_forest(**kwargs):
 def line_regression(**kwargs):
     return LinearRegression(**kwargs)
 
-def gradient_boosting(**kwargs):
+def gradient_boosting_regression(**kwargs):
     return GradientBoostingRegressor(**kwargs)
 
 def random_forest_class(**kwargs):
     return RandomForestClassifier(**kwargs)
+
+def gradient_boosting_class(**kwargs):
+    return GradientBoostingClassifier(**kwargs)
 
 def params_random_forest(a,b,c,d,e,f) -> dict:
     return {
@@ -53,7 +56,7 @@ def params_gradient_boosting(a,b,c,d,e,f,g) -> dict:
         "subsample": g, 
     }
 
-def params_random_forest_class(a,b,c,d,e):
+def params_random_forest_class(a,b,c,d,e) -> dict:
     return {
     'n_estimators': a,
     'max_depth': b,
