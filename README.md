@@ -1,5 +1,5 @@
 
-# 🚀 Machine Learning Regression & Classification with GUI
+# 🚀 AI Models Constructor with GUI
 
 This repository contains a graphical interface tool for building and evaluating machine learning models. Using `RandomForest`, `Gradient Boosting`, and `Linear Regression`, you can train models for both regression and classification without writing a single line of code!
 
@@ -39,8 +39,4 @@ Simply launch `main.py`, and an intuitive GUI will open, allowing you to:
 
 - `main.py` — main script with GUI functionality
 - `regression.py` — library with models and data processing functions
-
-## 📢 Contact
-
-If you have ideas or questions, feel free to open an issue or pull request! 🤝
 
