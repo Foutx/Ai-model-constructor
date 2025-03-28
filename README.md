@@ -9,7 +9,7 @@ This repository contains a graphical interface tool for building and evaluating 
 - 📊 **Regression**: RandomForestRegressor, GradientBoostingRegressor, LinearRegression
 - 🏷 **Classification**: RandomForestClassifier, GradientBoostingClassifier
 - 📂 **Data Handling**: load and split datasets into train/test
-- 🏆 **Metrics**: MSE, MAE, R2, F1-score, Accuracy, ROC AUC, and more
+- 🏆 **Metrics**: MSE, MAE, R2, F1-score, Accuracy, ROC AUC
 - 💾 **Model Saving** in `pickle` format
 - 📈 **Graph Generation** for result analysis
 
