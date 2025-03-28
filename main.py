@@ -210,8 +210,8 @@ if __name__ == '__main__':
         msg.setText(text)
         msg.exec()
 
-
-    def test_train_data_find():
+  
+    def test_train_data_find(): # now its usless
         # Test will be same
         global directory_train
         directory_train = QFileDialog.getExistingDirectory(main, "Выбрать папку", QDir.homePath())
@@ -318,8 +318,8 @@ if __name__ == '__main__':
             if_metrics_class.setVisible(True)
 
             choose_model_classification_csv.setCurrentIndex(0)
-
-        elif index == 2:
+        
+        elif index == 2: # now its usless
             btn_create_regression_csv.setVisible(False)
             btn_create_classification_csv.setVisible(False)
             btn_create_classification.setVisible(True)
