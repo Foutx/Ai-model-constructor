@@ -90,7 +90,7 @@ if __name__ == '__main__':
     percent_data.setToolTip('Percentage of test data in %/100')
     
     choose_task = QComboBox()
-    choose_task.addItems(['Regression Task (CSV File)', 'Classification Task (CSV File)', 'Classification Task (Images)'])
+    choose_task.addItems(['Regression Task (CSV File)', 'Classification Task (CSV File)']) # 'Classification Task (Images)' (maybe in future idk <3 )
     choose_model_regression = QComboBox()
     choose_model_regression.addItems(['RandomForestRegressor', 'GradientBoostingRegressor', 'LinearRegression'])
     choose_model_classification_csv = QComboBox()
