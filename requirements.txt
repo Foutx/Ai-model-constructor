@@ -5,3 +5,4 @@ matplotlib
 seaborn
 pickle-mixin
 PyQt5
+tabulate
