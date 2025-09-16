@@ -88,7 +88,7 @@ def saving_model_data_regression(model,b:bool,c:bool,y_test,y_pred):
         try:
             mse = mean_squared_error(y_test, y_pred)
             mae = mean_absolute_error(y_test, y_pred)
-            r2 = r2_score(y_test, y_pred)  # Исправлено: y_test, y_pred
+            r2 = r2_score(y_test, y_pred) 
             explained_variance = explained_variance_score(y_test, y_pred)
             mape = mean_absolute_percentage_error(y_test, y_pred)
 
@@ -102,7 +102,7 @@ def saving_model_data_regression(model,b:bool,c:bool,y_test,y_pred):
             }
 
 
-            # Используем tabulate для форматирования метрик в таблицу
+           
             metrics_table = tabulate(metrics.items(), headers=["Metric", "Value"], tablefmt="grid")
 
             with open('metrics.txt', 'w') as f:
@@ -124,7 +124,7 @@ def saving_model_data_csv_class(model,b:bool,c:bool,y_test,y_pred,y_prob=None):
             conf_matrix = confusion_matrix(y_test, y_pred)
             class_report = classification_report(y_test, y_pred)
 
-            # Используем tabulate для форматирования confusion matrix
+           
             conf_matrix_table = tabulate(conf_matrix, headers=["Predicted 0", "Predicted 1"], tablefmt="grid")
 
             with open('metrics.txt', 'w') as f:
@@ -187,7 +187,7 @@ def show_metrics_csv_class(y_pred,y_test,accuracy:bool,f1:bool,auc_score:bool,co
     if accuracy:
         accuracy = accuracy_score(y_test, y_pred)
         plt.figure(figsize=(8, 6))
-        plt.plot(accuracy)  # Показываем только одно значение accuracy
+        plt.plot(accuracy) 
         plt.xlabel("Result")
         plt.ylabel("Accuracy")
         plt.title(f"Accuracy: {accuracy:.4f}")
@@ -220,3 +220,4 @@ def show_metrics_csv_class(y_pred,y_test,accuracy:bool,f1:bool,auc_score:bool,co
         disp.plot(cmap='Blues', values_format='d') 
         plt.title("Confusion Matrix")
         plt.show()
+
