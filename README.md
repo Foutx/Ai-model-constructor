@@ -40,3 +40,7 @@ Simply launch `main.py`, and an intuitive GUI will open, allowing you to:
 - `main.py` — main script with GUI functionality
 - `regression.py` — library with models and data processing functions
 
+## 🖼 Demo / Screenshots
+![Demo screenshot](demo.jpg)
+---
+**#Created by Foutx**
